@@ -1,0 +1,11 @@
+---
+
+- hosts: sonatype
+  tasks:
+    - name: Add host public key to authorized_keys for vagrant user
+      authorized_key:
+        user: vagrant
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+        state: present
+        exclusive: no
+      become: true

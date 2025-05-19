@@ -1,0 +1,26 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+VM_IP: "192.168.56.10"
+HOSTNAME: "sonatype"
+
+Vagrant.configure("2") do |config|
+  config.vm.define :sonatype do |vbox|
+    vbox.vm.box = "ubuntu/focal64"
+    vbox.vm.hostname = HOSTNAME
+    vbox.vm.network :private_network, ip: VM_IP
+    vbox.vm.provision "shell", path: "~/ansible-study/provisioning/shell/ssh.sh"
+
+    vbox.vm.provider "virtualbox" do |vbox|
+      vbox.gui = false
+      vbox.cpus = 8
+      vbox.memory = 8192
+    end
+
+    config.vm.provision "ansible" do |ansible|
+      ansible.playbook = "/home/vagrant/sonatype-study/provisioning/sonatype.yml"
+      ansible.groups = {
+        "sonatype" => ["sonatype"],
+      }
+    end
+  end
+end
