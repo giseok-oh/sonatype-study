@@ -1,25 +1,40 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-VM_IP: "192.168.56.10"
-HOSTNAME: "sonatype"
+VM_LIST = {
+  "iq-server" => {
+    "ip" => "192.168.56.10",
+    "cpus" => 2,
+    "memory" => 8_192
+  },
+  "nexus-oss" => {
+    "ip" => "192.168.56.11",
+    "cpus" => 8,
+    "memory" => 16_384
+  }
+}
 
 Vagrant.configure("2") do |config|
-  config.vm.define :sonatype do |vbox|
-    vbox.vm.box = "ubuntu/focal64"
-    vbox.vm.hostname = HOSTNAME
-    vbox.vm.network :private_network, ip: VM_IP
-    vbox.vm.provision "shell", path: "~/ansible-study/provisioning/shell/ssh.sh"
+  VM_LIST.each do |hostname, opts|
+    config.vm.define :sonatype do |node|
+      node.vm.box = "ubuntu/focal64"
+      node.vm.hostname = hostname
+      node.vm.network :private_network, ip: opts["ip"]
+      node.vm.provision "shell", path: "~/ansible-study/provisioning/shell/ssh.sh"
 
-    vbox.vm.provider "virtualbox" do |vbox|
-      vbox.gui = false
-      vbox.cpus = 8
-      vbox.memory = 8192
-    end
+      node.vm.provider "virtualbox" do |vbox|
+        vbox.gui = false
+        vbox.cpus = opts["cpus"]
+        vbox.memory = opts["memory"]
+      end
+  end
 
     config.vm.provision "ansible" do |ansible|
-      ansible.playbook = "/home/vagrant/sonatype-study/provisioning/sonatype.yml"
+      ansible.playbook = "~/sonatype-study/provisioning/setup-ssh-key.yml"
+      ansible.playbook = "~/sonatype-study/provisioning/playbook-sonatype.yml"
       ansible.groups = {
-        "sonatype" => ["sonatype"],
+        "iq-server" => ["iq-server"],
+        "nexus-oss" => ["nexus-oss"],
+        "all:children" => ["iq-server", "nexus-oss"]
       }
     end
   end

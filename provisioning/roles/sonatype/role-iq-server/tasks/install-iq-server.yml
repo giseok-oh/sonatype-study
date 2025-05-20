@@ -1,0 +1,18 @@
+---
+
+- hosts: iq-sever
+  tasks:
+    - name: "install iq server"
+      ansible.builtin.shell: |
+        wget https://download.sonatype.com/clm/server/latest.tar.gz
+        mkdir -p {{ IQ_SERVER_PATH }}
+        tar xvzf latest.tar.gz -C {{ IQ_SERVER_PATH }}
+        chown -R vagrant:vagrant {{ IQ_SERVER_PATH }}
+      become: true
+
+    - name: "run iq-server"
+      ansible.builtin.shell: |
+        cd {{ IQ_SERVER_PATH }}
+        java -jar nexus-iq-server-*.jar server config.yml 2> stderr.log
+      become: true
+      ignore_errors: true

@@ -17,7 +17,7 @@ exit
 HOST_PUBLIC_KEY_FILE="$HOME/.ssh/id_rsa.pub"
 VM_USER="vagrant"
 
-TARGET_IPS=("192.168.56.10")
+TARGET_IPS=("192.168.56.10", "192.168.56.11")
 
 if [ -f "$HOST_PUBLIC_KEY_FILE" ]; then
     for VM_IP in "${TARGET_IPS[@]}"; do

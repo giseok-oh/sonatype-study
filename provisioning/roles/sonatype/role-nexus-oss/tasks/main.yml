@@ -1,0 +1,4 @@
+---
+
+- name: install nexus oss
+  import_tasks: ./install-nexus-oss.yml

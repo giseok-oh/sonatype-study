@@ -1,6 +1,6 @@
 ---
 
-- hosts: sonatype
+- hosts: all
   tasks:
     - name: Add host public key to authorized_keys for vagrant user
       authorized_key:
