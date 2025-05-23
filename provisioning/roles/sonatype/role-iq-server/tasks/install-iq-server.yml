@@ -1,18 +1,29 @@
 ---
 
-- hosts: iq-sever
-  tasks:
-    - name: "install iq server"
-      ansible.builtin.shell: |
-        wget https://download.sonatype.com/clm/server/latest.tar.gz
-        mkdir -p {{ IQ_SERVER_PATH }}
-        tar xvzf latest.tar.gz -C {{ IQ_SERVER_PATH }}
-        chown -R vagrant:vagrant {{ IQ_SERVER_PATH }}
-      become: true
+- name: "[pre] install openjdk-17"
+  ansible.builtin.apt:
+    name: openjdk-17-jdk
+  become: true
 
-    - name: "run iq-server"
-      ansible.builtin.shell: |
-        cd {{ IQ_SERVER_PATH }}
-        java -jar nexus-iq-server-*.jar server config.yml 2> stderr.log
-      become: true
-      ignore_errors: true
+- name: "Ensure IQ_SERVER_PATH is executable (traversable)"
+  ansible.builtin.file:
+    path: "{{ IQ_SERVER_PATH }}"
+    mode: "0755"
+    state: directory
+    recures: true
+    owner: root
+    group: root
+  become: true
+
+- name: "Install IQ Server"
+  ansible.builtin.unarchive:
+    src: "{{ IQ_SERVER_DOWNLOAD_URL }}"
+    dest: "{{ IQ_SERVER_PATH }}"
+    remote_src: yes
+  become: true
+  register: result
+
+- name: "Print IQ Server insall succeed"
+  ansible.builtin.debug:
+    var: result
+  when: result is succeeded

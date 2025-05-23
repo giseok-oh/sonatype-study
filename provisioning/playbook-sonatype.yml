@@ -3,28 +3,24 @@
 - hosts: all
   tasks:
     - name: "[pre] apt update"
-      ansible.builtin.apt:
+      ansible.builtin.dnf:
         update_cache: yes
       become: true
 
     - name: "[pre] apt upgrade"
-      ansible.builtin.apt:
+      ansible.builtin.dnf:
         upgrade: dist
       become: true
 
-    - name: "[pre] install java"
-      ansible.builtin.apt:
-        name: openjdk-17-jdk
+    - name: "[pre] install openjdk-17"
+      ansible.builtin.dnf:
+        name: openjdk-11-jdk
       become: true
 
-- hosts: iq-server
-  vars:
-    - ROLES_PATH: ./roles
+- hosts: group_iq
   roles:
-    - role: "{{ ROLES_PATH }}/sonatype/role-iq-server"
+    - role: "./roles/sonatype/role-iq-server"
 
-- hosts: nexus-oss
-  vars:
-    - ROLES_PATH: ./roles
+- hosts: group_nexus
   roles:
-    - role: "{{ ROLES_PATH }}/sonatype/role-nexus-oss"
+    - role: "./roles/sonatype/role-nexus"

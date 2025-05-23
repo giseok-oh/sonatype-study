@@ -1,0 +1,40 @@
+---
+
+- name: "Create new user for manage nexus"
+  ansible.builtin.user:
+    name: nexus
+    shell: /bin/bash
+    home: "{{ NEXUS_USER_HOME }}"
+    create_home: yes
+  become: true
+
+- name: "Allow nexus user to run sudo without password"
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/nexus
+    content: "nexus ALL=(ALL) NOPASSWD: ALL"
+    mode: "0440"
+  become: true
+
+- name: "Ensure NEXUS_PATH is executable (traversable)"
+  ansible.builtin.file:
+    path: "{{ NEXUS_PATH }}"
+    mode: "0755"
+    state: directory
+    owner: nexus
+    group: nexus
+  become: true
+
+- name: "Install Nexus"
+  ansible.builtin.unarchive:
+    src: "{{ NEXUS_DOWNLOAD_URL }}"
+    dest: "{{ NEXUS_PATH }}"
+    remote_src: yes
+    owner: nexus
+    group: nexus
+  become: true
+  register: result
+
+- name: "Print Nexus install succeed"
+  ansible.builtin.debug:
+    var: result
+  when: result is succeeded

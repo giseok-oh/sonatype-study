@@ -6,7 +6,7 @@ VM_LIST = {
     "cpus" => 2,
     "memory" => 8_192
   },
-  "nexus-oss" => {
+  "nexus" => {
     "ip" => "192.168.56.11",
     "cpus" => 8,
     "memory" => 16_384
@@ -15,27 +15,39 @@ VM_LIST = {
 
 Vagrant.configure("2") do |config|
   VM_LIST.each do |hostname, opts|
-    config.vm.define :sonatype do |node|
+    config.vm.define hostname do |node|
       node.vm.box = "ubuntu/focal64"
       node.vm.hostname = hostname
       node.vm.network :private_network, ip: opts["ip"]
-      node.vm.provision "shell", path: "~/ansible-study/provisioning/shell/ssh.sh"
+      node.vm.provision "shell", path: "../provisioning/shell/ssh.sh", args: opts["ip"]
 
       node.vm.provider "virtualbox" do |vbox|
         vbox.gui = false
         vbox.cpus = opts["cpus"]
         vbox.memory = opts["memory"]
       end
+    end
   end
 
-    config.vm.provision "ansible" do |ansible|
-      ansible.playbook = "~/sonatype-study/provisioning/setup-ssh-key.yml"
-      ansible.playbook = "~/sonatype-study/provisioning/playbook-sonatype.yml"
-      ansible.groups = {
-        "iq-server" => ["iq-server"],
-        "nexus-oss" => ["nexus-oss"],
-        "all:children" => ["iq-server", "nexus-oss"]
-      }
-    end
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "../provisioning/setup-ssh-key.yml"
+    ansible.groups = {
+      "all:children" => ["iq-server", "nexus"]
+    }
+    ansible.extra_vars = {
+      ansible_python_interpreter: "/usr/bin/python3"
+    }
+  end
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "../provisioning/playbook-sonatype.yml"
+    ansible.groups = {
+      "group_iq" => ["iq-server"],
+      "group_nexus" => ["nexus"],
+      "all:children" => ["iq-server", "nexus"]
+    }
+    ansible.extra_vars = {
+      ansible_python_interpreter: "/usr/bin/python3"
+    }
   end
 end
