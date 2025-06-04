@@ -1,4 +1,0 @@
----
-
-- name: install nexus
-  import_tasks: ./install-nexus.yml

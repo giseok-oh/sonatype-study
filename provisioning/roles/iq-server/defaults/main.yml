@@ -1,0 +1,17 @@
+---
+
+##### IQ SERVER #####
+IQ_SERVER_USER_HOME: "/home/iqserver"
+IQ_SERVER_PATH: "/opt/sonatype-iq-server"
+IQ_SERVER_DOWNLOAD_URL: "https://download.sonatype.com/clm/server/nexus-iq-server-1.191.0-01-bundle.tar.gz"
+
+##### WEBHOOK NODE #####
+SLACK_WEBHOOK_PATH: "/opt/sonatype-slack-webhook"
+SLACK_WEBHOOK_DOWNLOAD_URL: "https://github.com/oscka/sonatype-slack-webhook-node.git"
+
+##### NODEJS #####
+NODEJS_DOWNLOAD_URL: "https://rpm.nodesource.com/setup_23.x"
+
+##### LDAP #####
+LDAP_PATH: "/opt/ldap"
+LDAP_DOWNLOAD_URL: "https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.6.10.tgz"

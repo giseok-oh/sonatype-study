@@ -1,4 +1,0 @@
----
-
-- name: install iq server
-  import_tasks: ./install-iq-server.yml

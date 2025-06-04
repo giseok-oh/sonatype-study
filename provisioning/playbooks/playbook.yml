@@ -1,0 +1,43 @@
+---
+
+- hosts: all
+  tasks:
+    - name: "Install prerequisites"
+      ansible.builtin.dnf:
+        name:
+          - git
+          - curl
+      become: true
+
+    - name: "Install openjdk-17"
+      ansible.builtin.dnf:
+        name: java-17-openjdk
+      become: true
+
+    - name: "Find path to Java 17 binary"
+      ansible.builtin.shell: |
+        realpath $(find /usr/lib/jvm/ -type f -path '*/bin/java' | grep 'java-17')
+      register: java17_path
+      become: true
+
+    - name: "Set Java 17 as default"
+      ansible.builtin.command:
+        cmd: alternatives --set java {{ java17_path.stdout }}
+      become: true
+
+    - name: "Check current Java version"
+      ansible.builtin.shell: java -version 2>&1
+      register: java_version_output
+      changed_when: false
+
+    - name: "Show Java version"
+      ansible.builtin.debug:
+        var: java_version_output.stdout_lines
+
+- hosts: group_iq
+  roles:
+    - role: "../roles/iq-server"
+
+- hosts: group_nexus
+  roles:
+    - role: "../roles/nexus"

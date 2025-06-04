@@ -1,0 +1,26 @@
+---
+
+- name: "Create directory for download Nexus"
+  ansible.builtin.file:
+    path: "{{ NEXUS_DOWNLOAD_PATH }}"
+    mode: "0755"
+    state: directory
+    owner: nexus
+    group: nexus
+  become: true
+
+- name: "Install Nexus"
+  ansible.builtin.unarchive:
+    src: "{{ NEXUS_DOWNLOAD_URL }}"
+    dest: "{{ NEXUS_DOWNLOAD_PATH }}"
+    remote_src: yes
+    owner: nexus
+    group: nexus
+  become_user: nexus
+  become: true
+  register: result
+
+- name: "Print Nexus install succeed"
+  ansible.builtin.debug:
+    var: result
+  when: result is succeeded

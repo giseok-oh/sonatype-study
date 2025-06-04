@@ -1,0 +1,40 @@
+---
+
+- name: "Create directory for download slack webhook node"
+  ansible.builtin.file:
+    path: "{{ SLACK_WEBHOOK_PATH }}"
+    mode: "0755"
+    state: directory
+    owner: iqserver
+    group: iqserver
+  become: true
+
+- name: "Add directory to Git safe.directory"
+  ansible.builtin.command:
+    cmd: git config --global --add safe.directory "{{ SLACK_WEBHOOK_PATH }}"
+  become: true
+
+- name: "Clone slack webhook node"
+  ansible.builtin.git:
+    repo: "{{ SLACK_WEBHOOK_DOWNLOAD_URL }}"
+    dest: "{{ SLACK_WEBHOOK_PATH }}"
+    force: true
+  become: true
+
+- name: Install axios
+  community.general.npm:
+    name: axios
+    path: "{{ SLACK_WEBHOOK_PATH }}"
+  become: true
+
+- name: Install express
+  community.general.npm:
+    name: express
+    path: "{{ SLACK_WEBHOOK_PATH }}"
+  become: true
+
+- name: Install pm2
+  community.general.npm:
+    name: pm2
+    global: true
+  become: true

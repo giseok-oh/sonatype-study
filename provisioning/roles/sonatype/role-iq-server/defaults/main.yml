@@ -1,4 +1,0 @@
----
-
-IQ_SERVER_PATH: "/opt/sonatype-iq-server"
-IQ_SERVER_DOWNLOAD_URL: "https://download.sonatype.com/clm/server/latest.tar.gz"

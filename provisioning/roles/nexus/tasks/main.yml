@@ -1,0 +1,13 @@
+---
+
+- name: Allow ports
+  ansible.builtin.shell: |
+    sudo firewall-cmd --zone=public --add-port=8081/tcp --permanent
+    sudo firewall-cmd --reload
+  become: true
+
+- name: Create user
+  import_tasks: ./create-user.yml
+
+- name: Install Nexus Repository
+  import_tasks: ./install-nexus.yml

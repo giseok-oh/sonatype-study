@@ -1,0 +1,16 @@
+---
+
+- name: "Create new user for manage Nexus"
+  ansible.builtin.user:
+    name: nexus
+    shell: /bin/bash
+    home: "{{ NEXUS_USER_HOME }}"
+    create_home: yes
+  become: true
+
+- name: "Allow Nexus user to run sudo without password"
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/nexus
+    content: "nexus ALL=(ALL) NOPASSWD: ALL"
+    mode: "0440"
+  become: true

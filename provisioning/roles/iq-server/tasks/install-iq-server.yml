@@ -1,18 +1,12 @@
 ---
 
-- name: "[pre] install openjdk-17"
-  ansible.builtin.apt:
-    name: openjdk-17-jdk
-  become: true
-
-- name: "Ensure IQ_SERVER_PATH is executable (traversable)"
+- name: "Create directory for download IQ Server"
   ansible.builtin.file:
     path: "{{ IQ_SERVER_PATH }}"
     mode: "0755"
     state: directory
-    recures: true
-    owner: root
-    group: root
+    owner: iqserver
+    group: iqserver
   become: true
 
 - name: "Install IQ Server"
@@ -20,10 +14,11 @@
     src: "{{ IQ_SERVER_DOWNLOAD_URL }}"
     dest: "{{ IQ_SERVER_PATH }}"
     remote_src: yes
+  become_user: iqserver
   become: true
   register: result
 
-- name: "Print IQ Server insall succeed"
+- name: "Print IQ Server install succeed"
   ansible.builtin.debug:
     var: result
   when: result is succeeded

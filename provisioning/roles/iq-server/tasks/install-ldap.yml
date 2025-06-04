@@ -1,0 +1,10 @@
+---
+
+- name: "Install LDAP"
+  ansible.builtin.dnf:
+    name:
+      - openldap 
+      - openldap-clients
+      - openldap-servers
+    enablerepo: "powertools"
+  become: true

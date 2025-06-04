@@ -1,0 +1,46 @@
+---
+
+- name: Disable AppStream nodejs module
+  ansible.builtin.command: 
+    cmd: dnf module disable -y nodejs
+  become: true
+
+- name: Downlaod the setup script
+  ansible.builtin.get_url:
+    url: "{{ NODEJS_DOWNLOAD_URL }}"
+    dest: "/tmp/nodesource_setup.sh"
+    mode: "0755"
+  become: true
+
+- name: Run the setup script as root
+  ansible.builtin.command:
+    cmd: bash nodesource_setup.sh
+  args:
+    chdir: "/tmp"
+  become: true
+
+- name: Install Node.js and NPM
+  ansible.builtin.dnf:
+    name: 
+      - nodejs
+      - npm
+  become: true
+
+- name: Allow ports
+  ansible.builtin.shell: |
+    sudo firewall-cmd --zone=public --add-port=8070/tcp --permanent
+    sudo firewall-cmd --zone=public --add-port=8071/tcp --permanent
+    sudo firewall-cmd --reload
+  become: true
+
+- name: Create User
+  import_tasks: ./create-user.yml
+
+- name: Install IQ Server
+  import_tasks: ./install-iq-server.yml
+
+- name: Install Slack Webhook node
+  import_tasks: ./install-slack-webhook-node.yml
+
+- name: Install LDAP
+  import_tasks: ./install-ldap.yml

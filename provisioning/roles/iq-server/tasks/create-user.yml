@@ -1,0 +1,16 @@
+---
+
+- name: "Create new user for manage IQ Server"
+  ansible.builtin.user:
+    name: iqserver
+    shell: /bin/bash
+    home: "{{ IQ_SERVER_USER_HOME }}"
+    create_home: yes
+  become: true
+
+- name: "Allow IQ Server user to run sudo without password"
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/iqserver
+    content: "iqserver ALL=(ALL) NOPASSWD: ALL"
+    mode: "0440"
+  become: true

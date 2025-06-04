@@ -1,0 +1,6 @@
+---
+
+##### NEXUS #####
+NEXUS_USER_HOME: "/home/nexus"
+NEXUS_DOWNLOAD_PATH: "/opt/sonatype-nexus"
+NEXUS_DOWNLOAD_URL: "https://download.sonatype.com/nexus/3/nexus-3.80.0-06-linux-x86_64.tar.gz"
