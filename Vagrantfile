@@ -37,6 +37,7 @@ Vagrant.configure("2") do |config|
       node.vm.hostname = hostname
       node.vm.network :private_network, ip: opts[:ip]
       node.vm.disk :disk, size: opts[:disksize], primary: true
+      node.vm.synced_folder '.', '/vagrant', disabled: true
 
       if hostname == "iq"
         node.vm.network "forwarded_port", guest: 8070, host: 8070, protocol: "tcp"
